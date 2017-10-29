@@ -1,4 +1,5 @@
-#include "Logging.h"
+#include "color.h"
+#include "logging.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 
@@ -12,6 +13,7 @@ bool gameRunning = true;
 
 int init();
 int graceful_exit();
+void render();
 
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
@@ -28,6 +30,7 @@ int main(int argc, char const *argv[]) {
         break;
       }
     }
+    render();
   }
 
   return graceful_exit();
@@ -56,4 +59,10 @@ int init() {
 int graceful_exit() {
   SDL_Quit();
   return 0;
+}
+
+void render() {
+  SDL_SetRenderDrawColor(gRenderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
+  SDL_RenderClear(gRenderer);
+  SDL_RenderPresent(gRenderer);
 }
