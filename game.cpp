@@ -8,19 +8,29 @@
 
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
+bool gameRunning = true;
 
 int init();
 int graceful_exit();
 
 int main(int argc, char const *argv[]) {
-  std::cout << "Test" << std::endl;
   if (init() != 0) {
     ERROR("init failed");
   }
   DEBUG("Init'd");
-  graceful_exit();
 
-  return 0;
+  while (gameRunning) {
+    SDL_Event *evt = new SDL_Event;
+    while (SDL_PollEvent(evt)) {
+      switch (evt->type) {
+      case SDL_QUIT:
+        gameRunning = false;
+        break;
+      }
+    }
+  }
+
+  return graceful_exit();
 }
 int init() {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
@@ -38,7 +48,7 @@ int init() {
 
   gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
   if (gRenderer == NULL) {
-    ERROR("")
+    ERROR("gRenderer is null");
   }
 
   return 0;
