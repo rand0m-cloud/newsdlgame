@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 
+
 #define TITLE "NewSDLGame"
 #define WIDTH 400
 #define HEIGHT 400
@@ -18,6 +19,7 @@ void render();
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
     ERROR("init failed");
+    return -1;
   }
   DEBUG("Init'd");
 
