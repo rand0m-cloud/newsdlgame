@@ -12,11 +12,18 @@
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
-std::vector<Sprite*> sprites;
+std::vector<Sprite *> sprites;
 
 int init();
 int graceful_exit();
 void render();
+
+void printRect(SDL_Rect rect) {
+  DEBUG(rect.x);
+  DEBUG(rect.y);
+  DEBUG(rect.w);
+  DEBUG(rect.h);
+}
 
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
@@ -24,10 +31,11 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  Sprite* box = new Sprite(gRenderer);
+  Sprite *box = new Sprite(gRenderer);
   box->gColor = RED;
   sprites.push_back(box);
   while (gameRunning) {
+    SDL_Delay(100);
     SDL_Event *evt = new SDL_Event;
     while (SDL_PollEvent(evt)) {
       switch (evt->type) {
@@ -68,16 +76,14 @@ int graceful_exit() {
 }
 
 void render() {
+  SDL_SetRenderTarget(gRenderer, NULL);
   SDL_SetRenderDrawColor(gRenderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
   SDL_RenderClear(gRenderer);
-  SDL_RenderPresent(gRenderer);
-  
-  for(Sprite* s: sprites){
-    DEBUG(s->dstRect.x);
-    DEBUG(s->dstRect.y);
-    DEBUG(s->dstRect.w);
-    DEBUG(s->dstRect.h);
-    SDL_RenderCopy(gRenderer,s->render(),&s->sourceRect,&s->dstRect);
-  
+
+  for (Sprite *s : sprites) {
+    printRect(s->sourceRect);
+    printRect(s->dstRect);
+    SDL_RenderCopy(gRenderer, s->render(), &s->sourceRect, &s->dstRect);
   }
+  SDL_RenderPresent(gRenderer);
 }
