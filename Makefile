@@ -1,4 +1,4 @@
-SRC = game.cpp
+SRC = game.cpp $(wildcard sprite/*.cpp)
 OBJS = $(SRC:.cpp=.o)
 
 OBJ_NAME = SDLgame

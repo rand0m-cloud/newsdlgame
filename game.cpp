@@ -1,8 +1,9 @@
 #include "color.h"
 #include "logging.h"
+#include "sprite/Sprite.h"
 #include <SDL2/SDL.h>
 #include <iostream>
-
+#include <vector>
 
 #define TITLE "NewSDLGame"
 #define WIDTH 400
@@ -11,6 +12,7 @@
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
+std::vector<Sprite*> sprites;
 
 int init();
 int graceful_exit();
@@ -22,7 +24,9 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-
+  Sprite* box = new Sprite(gRenderer);
+  box->gColor = RED;
+  sprites.push_back(box);
   while (gameRunning) {
     SDL_Event *evt = new SDL_Event;
     while (SDL_PollEvent(evt)) {
@@ -67,4 +71,13 @@ void render() {
   SDL_SetRenderDrawColor(gRenderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
   SDL_RenderClear(gRenderer);
   SDL_RenderPresent(gRenderer);
+  
+  for(Sprite* s: sprites){
+    DEBUG(s->dstRect.x);
+    DEBUG(s->dstRect.y);
+    DEBUG(s->dstRect.w);
+    DEBUG(s->dstRect.h);
+    SDL_RenderCopy(gRenderer,s->render(),&s->sourceRect,&s->dstRect);
+  
+  }
 }
