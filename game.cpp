@@ -19,13 +19,6 @@ int init();
 int graceful_exit();
 void render();
 
-void printRect(SDL_Rect rect) {
-  DEBUG(rect.x);
-  DEBUG(rect.y);
-  DEBUG(rect.w);
-  DEBUG(rect.h);
-}
-
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
     ERROR("init failed");
@@ -82,8 +75,6 @@ void render() {
   SDL_RenderClear(gRenderer);
 
   for (Sprite *s : sprites) {
-    printRect(s->sourceRect);
-    printRect(s->dstRect);
     SDL_Texture *targetTexture = s->render();
     SDL_SetRenderTarget(gRenderer, NULL);
     SDL_RenderCopy(gRenderer, targetTexture, &s->sourceRect, &s->dstRect);
