@@ -1,7 +1,10 @@
 #include "color.h"
 #include "logging.h"
+#include "sprite/ImageSprite.h"
+#include "sprite/Sprite.h"
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <vector>
 
 #define TITLE "NewSDLGame"
 #define WIDTH 400
@@ -10,6 +13,7 @@
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
+std::vector<Sprite *> sprites;
 
 int init();
 int graceful_exit();
@@ -18,10 +22,14 @@ void render();
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
     ERROR("init failed");
+    return -1;
   }
   DEBUG("Init'd");
-
+  ImageSprite *box = new ImageSprite(gRenderer, "images/sprite1.png");
+  box->gColor = RED;
+  sprites.push_back(box);
   while (gameRunning) {
+    SDL_Delay(100);
     SDL_Event *evt = new SDL_Event;
     while (SDL_PollEvent(evt)) {
       switch (evt->type) {
@@ -62,7 +70,14 @@ int graceful_exit() {
 }
 
 void render() {
+  SDL_SetRenderTarget(gRenderer, NULL);
   SDL_SetRenderDrawColor(gRenderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
   SDL_RenderClear(gRenderer);
+
+  for (Sprite *s : sprites) {
+    SDL_Texture *targetTexture = s->render();
+    SDL_SetRenderTarget(gRenderer, NULL);
+    SDL_RenderCopy(gRenderer, targetTexture, &s->sourceRect, &s->dstRect);
+  }
   SDL_RenderPresent(gRenderer);
 }
