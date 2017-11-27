@@ -3,9 +3,9 @@
 #include <iostream>
 
 Sprite::Sprite(SDL_Renderer *mRender) : gRender(mRender) {
-  gTexture = SDL_CreateTexture(gRender, SDL_PIXELFORMAT_RGBA8888,
-                               SDL_TEXTUREACCESS_STREAMING, sourceRect.w,
-                               sourceRect.h);
+  gTexture =
+      SDL_CreateTexture(gRender, SDL_PIXELFORMAT_RGBA8888,
+                        SDL_TEXTUREACCESS_TARGET, sourceRect.w, sourceRect.h);
 }
 Sprite::~Sprite() {
   if (gTexture != NULL)

@@ -83,7 +83,9 @@ void render() {
   for (Sprite *s : sprites) {
     printRect(s->sourceRect);
     printRect(s->dstRect);
-    SDL_RenderCopy(gRenderer, s->render(), &s->sourceRect, &s->dstRect);
+    SDL_Texture *targetTexture = s->render();
+    SDL_SetRenderTarget(gRenderer, NULL);
+    SDL_RenderCopy(gRenderer, targetTexture, &s->sourceRect, &s->dstRect);
   }
   SDL_RenderPresent(gRenderer);
 }
