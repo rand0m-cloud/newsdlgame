@@ -6,6 +6,10 @@ Sprite::Sprite(SDL_Renderer *mRender) : gRender(mRender) {
   gTexture =
       SDL_CreateTexture(gRender, SDL_PIXELFORMAT_RGBA8888,
                         SDL_TEXTUREACCESS_TARGET, sourceRect.w, sourceRect.h);
+  x = &dstRect.x;
+  y = &dstRect.y;
+  w = &dstRect.w;
+  h = &dstRect.h;
 }
 Sprite::~Sprite() {
   if (gTexture != NULL)

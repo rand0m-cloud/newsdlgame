@@ -3,10 +3,6 @@
 #include "../logging.h"
 #include <SDL2/SDL.h>
 class Sprite {
-protected:
-  SDL_Renderer *gRender;
-  SDL_Texture *gTexture;
-
 public:
   Sprite(SDL_Renderer *);
   ~Sprite();
@@ -15,4 +11,9 @@ public:
   virtual void createTexture();
   SDL_Rect dstRect = {0, 0, 100, 100};
   color gColor = WHITE;
+
+protected:
+  SDL_Renderer *gRender;
+  SDL_Texture *gTexture;
+  int *x, *y, *w, *h;
 };
