@@ -1,5 +1,6 @@
 #include "color.h"
 #include "logging.h"
+#include "sprite/ImageSprite.h"
 #include "sprite/Sprite.h"
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -31,7 +32,7 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  Sprite *box = new Sprite(gRenderer);
+  ImageSprite *box = new ImageSprite(gRenderer, "images/sprite1.png");
   box->gColor = RED;
   sprites.push_back(box);
   while (gameRunning) {

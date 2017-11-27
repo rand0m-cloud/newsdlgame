@@ -17,7 +17,6 @@ void Sprite::createTexture() {
   SDL_RenderFillRect(gRender, &sourceRect);
 }
 SDL_Texture *Sprite::render() {
-  dstRect.x++;
   createTexture();
   return gTexture;
 }

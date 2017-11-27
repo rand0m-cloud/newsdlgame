@@ -1,17 +1,18 @@
 #pragma once
 #include "../color.h"
+#include "../logging.h"
 #include <SDL2/SDL.h>
 class Sprite {
-private:
+protected:
   SDL_Renderer *gRender;
   SDL_Texture *gTexture;
 
 public:
   Sprite(SDL_Renderer *);
   ~Sprite();
-  SDL_Texture *render();
+  virtual SDL_Texture *render();
   SDL_Rect sourceRect = {0, 0, 100, 100};
-  void createTexture();
+  virtual void createTexture();
   SDL_Rect dstRect = {0, 0, 100, 100};
   color gColor = WHITE;
 };
