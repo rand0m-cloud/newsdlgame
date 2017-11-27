@@ -10,8 +10,6 @@ public:
   SDL_Rect sourceRect = {0, 0, 100, 100};
   virtual void createTexture();
   SDL_Rect dstRect = {0, 0, 100, 100};
-  color gColor = WHITE;
-
 protected:
   SDL_Renderer *gRender;
   SDL_Texture *gTexture;

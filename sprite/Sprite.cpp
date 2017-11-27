@@ -1,4 +1,5 @@
 #include "Sprite.h"
+#include "../color.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 
@@ -17,7 +18,7 @@ Sprite::~Sprite() {
 }
 void Sprite::createTexture() {
   SDL_SetRenderTarget(gRender, gTexture);
-  SDL_SetRenderDrawColor(gRender, gColor.r, gColor.g, gColor.b, gColor.a);
+  SDL_SetRenderDrawColor(gRender, RED.r, RED.g, RED.b, RED.a);
   SDL_RenderFillRect(gRender, &sourceRect);
 }
 SDL_Texture *Sprite::render() {

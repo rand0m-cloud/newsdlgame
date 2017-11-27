@@ -2,6 +2,7 @@
 #include "logging.h"
 #include "sprite/ImageSprite.h"
 #include "sprite/Sprite.h"
+#include "sprite/Player.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
@@ -25,8 +26,7 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  ImageSprite *box = new ImageSprite(gRenderer, "images/sprite1.png");
-  box->gColor = RED;
+  Player *box = new Player(gRenderer, 0, 0);
   sprites.push_back(box);
   while (gameRunning) {
     SDL_Delay(100);
