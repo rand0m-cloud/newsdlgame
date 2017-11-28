@@ -21,6 +21,7 @@ std::vector<Sprite *> sprites;
 Uint32 currentTime = 0;
 Uint32 lastTime = 0;
 
+
 int init();
 int graceful_exit();
 void render();
@@ -31,6 +32,7 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
+
   sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0));
   sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0));
   sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100));
@@ -46,7 +48,6 @@ int main(int argc, char const *argv[]) {
       SDL_Delay(TPF - (SDL_GetTicks() - lastTime));
     }
     currentTime = SDL_GetTicks();
-
     SDL_Event *evt = new SDL_Event;
     while (SDL_PollEvent(evt)) {
       switch (evt->type) {
@@ -91,10 +92,10 @@ void render() {
   SDL_SetRenderDrawColor(gRenderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
                          BACKGROUND.a);
   SDL_RenderClear(gRenderer);
-
   for (Sprite *s : sprites) {
     // NULL targetTexture to target the screen
     s->render(currentTime - lastTime, NULL);
+
   }
   SDL_RenderPresent(gRenderer);
 }

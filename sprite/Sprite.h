@@ -16,3 +16,4 @@ protected:
   SDL_Renderer *gRender = NULL;
   SDL_Texture *gTexture = NULL;
 };
+

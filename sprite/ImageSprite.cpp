@@ -16,6 +16,7 @@ void ImageSprite::createTexture() {
 }
 void ImageSprite::changeImage(std::string filename) {
   gFilename = filename;
+
   gTexture = IMG_LoadTexture(gRender, gFilename.c_str());
   if (gTexture == NULL) {
     ERROR("gTexture is null");
@@ -24,3 +25,4 @@ void ImageSprite::changeImage(std::string filename) {
   SDL_QueryTexture(gTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 }
 ImageSprite::~ImageSprite() {}
+
