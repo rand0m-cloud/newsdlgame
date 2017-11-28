@@ -1,8 +1,9 @@
 #include "color.h"
 #include "logging.h"
 #include "sprite/ImageSprite.h"
+#include "sprite/Mino.h"
 #include "sprite/Sprite.h"
-#include "sprite/Player.h"
+#include "sprite/Tetromino.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
@@ -10,11 +11,15 @@
 #define TITLE "NewSDLGame"
 #define WIDTH 400
 #define HEIGHT 400
+#define FPS 60
+#define TPF (double)(1000 / FPS)
 
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
 std::vector<Sprite *> sprites;
+Uint32 currentTime = 0;
+Uint32 lastTime = 0;
 
 int init();
 int graceful_exit();
@@ -26,10 +31,16 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  Player *box = new Player(gRenderer, 0, 0);
+  Mino *box = new Mino(gRenderer, Mino::Color::red);
   sprites.push_back(box);
+  currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
-    SDL_Delay(100);
+    lastTime = currentTime;
+    if (SDL_GetTicks() - lastTime < TPF) {
+      SDL_Delay(TPF - (SDL_GetTicks() - lastTime));
+    }
+    currentTime = SDL_GetTicks();
+
     SDL_Event *evt = new SDL_Event;
     while (SDL_PollEvent(evt)) {
       switch (evt->type) {
@@ -75,7 +86,7 @@ void render() {
   SDL_RenderClear(gRenderer);
 
   for (Sprite *s : sprites) {
-    SDL_Texture *targetTexture = s->render();
+    SDL_Texture *targetTexture = s->render(currentTime - lastTime);
     SDL_SetRenderTarget(gRenderer, NULL);
     SDL_RenderCopy(gRenderer, targetTexture, &s->sourceRect, &s->dstRect);
   }

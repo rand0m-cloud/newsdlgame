@@ -21,7 +21,7 @@ void Sprite::createTexture() {
   SDL_SetRenderDrawColor(gRender, RED.r, RED.g, RED.b, RED.a);
   SDL_RenderFillRect(gRender, &sourceRect);
 }
-SDL_Texture *Sprite::render() {
+SDL_Texture *Sprite::render(int milli) {
   createTexture();
   return gTexture;
 }
