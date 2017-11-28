@@ -1,6 +1,7 @@
 #pragma once
 #include "ImageSprite.h"
 #include <SDL2/SDL.h>
+#define MINO_SIZE 25
 class Mino : public ImageSprite {
 
 public:

@@ -32,7 +32,7 @@ Mino::Mino(SDL_Renderer *mRenderer, enum Color mColor)
     ERROR("MinoColor is invalid");
   }
   changeImage(file);
-  *w = 25;
+  *w = MINO_SIZE;
   *h = *w;
 }
 Mino::~Mino() {}

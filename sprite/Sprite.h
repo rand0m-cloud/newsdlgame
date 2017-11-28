@@ -10,9 +10,9 @@ public:
   SDL_Rect sourceRect = {0, 0, 100, 100};
   virtual void createTexture();
   SDL_Rect dstRect = {0, 0, 100, 100};
+  int *x, *y, *w, *h;
 
 protected:
-  SDL_Renderer *gRender;
-  SDL_Texture *gTexture;
-  int *x, *y, *w, *h;
+  SDL_Renderer *gRender = NULL;
+  SDL_Texture *gTexture = NULL;
 };

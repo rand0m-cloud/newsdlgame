@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  Mino *box = new Mino(gRenderer, Mino::Color::red);
+  Tetromino *box = new Tetromino(gRenderer, Tetromino::Shape::S);
   sprites.push_back(box);
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
