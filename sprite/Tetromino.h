@@ -8,7 +8,7 @@ class Tetromino : public Sprite {
 
 public:
   enum Shape { O, I, T, L, J, S, Z };
-  Tetromino(SDL_Renderer *renderer, enum Shape type);
+  Tetromino(SDL_Renderer *renderer, enum Shape type, int startX, int startY);
   virtual ~Tetromino();
   void createTexture();
 

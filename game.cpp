@@ -31,8 +31,14 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  Tetromino *box = new Tetromino(gRenderer, Tetromino::Shape::S);
-  sprites.push_back(box);
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::Z, 100, 100));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::I, 0, 200));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::T, 100, 200));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::O, 200, 200));
+
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
     lastTime = currentTime;

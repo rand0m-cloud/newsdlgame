@@ -3,7 +3,8 @@
 #include "Shapes.h"
 #include <SDL2/SDL.h>
 
-Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type)
+Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
+                     int startX, int startY)
     : Sprite(mRenderer), gType(type) {
   Mino::Color color;
   switch (gType) {
@@ -54,6 +55,8 @@ Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type)
     break;
   }
   sourceRect = dstRect;
+  *x = startX;
+  *y = startY;
   for (int i = 0; i < 4; i++) {
     Mino *m = new Mino(mRenderer, color);
     SDL_Rect const *shape = &(*gPattern)[i];
