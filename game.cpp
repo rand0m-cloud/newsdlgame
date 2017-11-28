@@ -87,9 +87,8 @@ void render() {
   SDL_RenderClear(gRenderer);
 
   for (Sprite *s : sprites) {
-    SDL_Texture *targetTexture = s->render(currentTime - lastTime);
-    SDL_SetRenderTarget(gRenderer, NULL);
-    SDL_RenderCopy(gRenderer, targetTexture, &s->sourceRect, &s->dstRect);
+    // NULL targetTexture to target the screen
+    s->render(currentTime - lastTime, NULL);
   }
   SDL_RenderPresent(gRenderer);
 }

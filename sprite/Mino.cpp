@@ -36,4 +36,3 @@ Mino::Mino(SDL_Renderer *mRenderer, enum Color mColor)
   *h = *w;
 }
 Mino::~Mino() {}
-SDL_Texture *Mino::render(int ticks) { return ImageSprite::render(ticks); }

@@ -6,7 +6,7 @@ class Sprite {
 public:
   Sprite(SDL_Renderer *);
   ~Sprite();
-  virtual SDL_Texture *render(int milli);
+  virtual void render(int milli, SDL_Texture *targetTexture);
   SDL_Rect sourceRect = {0, 0, 100, 100};
   virtual void createTexture();
   SDL_Rect dstRect = {0, 0, 100, 100};

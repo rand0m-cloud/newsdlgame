@@ -7,7 +7,6 @@ public:
   enum Color { cyan, yellow, purple, green, red, lightblue, darkblue, orange };
   Mino(SDL_Renderer *, enum Color);
   ~Mino();
-  SDL_Texture *render(int millis);
 
 private:
   enum Mino::Color gColor;
