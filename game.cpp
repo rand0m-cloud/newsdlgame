@@ -82,7 +82,8 @@ int graceful_exit() {
 
 void render() {
   SDL_SetRenderTarget(gRenderer, NULL);
-  SDL_SetRenderDrawColor(gRenderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
+  SDL_SetRenderDrawColor(gRenderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
+                         BACKGROUND.a);
   SDL_RenderClear(gRenderer);
 
   for (Sprite *s : sprites) {

@@ -9,3 +9,5 @@ struct color {
 const color BLACK = {0, 0, 0, 255};
 const color WHITE = {255, 255, 255, 255};
 const color RED = {255, 0, 0, 255};
+const color LIGHTBLUE = {114, 175, 255, 255};
+const color BACKGROUND = LIGHTBLUE;

@@ -32,6 +32,8 @@ Mino::Mino(SDL_Renderer *mRenderer, enum Color mColor)
     ERROR("MinoColor is invalid");
   }
   changeImage(file);
+  *w = 25;
+  *h = *w;
 }
 Mino::~Mino() {}
 SDL_Texture *Mino::render(int ticks) { return ImageSprite::render(ticks); }
