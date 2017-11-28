@@ -31,4 +31,7 @@
 *.out
 *.app
 
+# Core dump
+core
+
 SDLgame
