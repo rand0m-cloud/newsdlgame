@@ -1,7 +1,9 @@
 #include "color.h"
 #include "logging.h"
 #include "sprite/ImageSprite.h"
+#include "sprite/Mino.h"
 #include "sprite/Sprite.h"
+#include "sprite/Tetromino.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
@@ -9,11 +11,16 @@
 #define TITLE "NewSDLGame"
 #define WIDTH 400
 #define HEIGHT 400
+#define FPS 60
+#define TPF (double)(1000 / FPS)
 
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
 std::vector<Sprite *> sprites;
+Uint32 currentTime = 0;
+Uint32 lastTime = 0;
+
 
 int init();
 int graceful_exit();
@@ -25,11 +32,22 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  ImageSprite *box = new ImageSprite(gRenderer, "images/sprite1.png");
-  box->gColor = RED;
-  sprites.push_back(box);
+
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::Z, 100, 100));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::I, 0, 200));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::T, 100, 200));
+  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::O, 200, 200));
+
+  currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
-    SDL_Delay(100);
+    lastTime = currentTime;
+    if (SDL_GetTicks() - lastTime < TPF) {
+      SDL_Delay(TPF - (SDL_GetTicks() - lastTime));
+    }
+    currentTime = SDL_GetTicks();
     SDL_Event *evt = new SDL_Event;
     while (SDL_PollEvent(evt)) {
       switch (evt->type) {
@@ -71,13 +89,13 @@ int graceful_exit() {
 
 void render() {
   SDL_SetRenderTarget(gRenderer, NULL);
-  SDL_SetRenderDrawColor(gRenderer, BLACK.r, BLACK.g, BLACK.b, BLACK.a);
+  SDL_SetRenderDrawColor(gRenderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
+                         BACKGROUND.a);
   SDL_RenderClear(gRenderer);
-
   for (Sprite *s : sprites) {
-    SDL_Texture *targetTexture = s->render();
-    SDL_SetRenderTarget(gRenderer, NULL);
-    SDL_RenderCopy(gRenderer, targetTexture, &s->sourceRect, &s->dstRect);
+    // NULL targetTexture to target the screen
+    s->render(currentTime - lastTime, NULL);
+
   }
   SDL_RenderPresent(gRenderer);
 }
