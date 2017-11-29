@@ -5,7 +5,7 @@
 
 Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
                      int startX, int startY)
-    : Sprite(mRenderer), gType(type) {
+    : Sprite(mRenderer), CollisionGroup(), gType(type) {
   Mino::Color color;
   switch (gType) {
   case O:
@@ -62,8 +62,11 @@ Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
     SDL_Rect const *shape = &(*gPattern)[i];
     *m->x = shape->x;
     *m->y = shape->y;
+    m->updateRect(*m->x + *x, *m->y + *y, *m->w, *m->h);
     minos.push_back(m);
+    addItem(m);
   }
+  calculateRect();
 }
 Tetromino::~Tetromino() {}
 void Tetromino::createTexture() {
@@ -71,4 +74,23 @@ void Tetromino::createTexture() {
   for (Mino *m : minos) {
     m->render(0, gTexture);
   }
+}
+void Tetromino::render(int milli, SDL_Texture *targetTexture) {
+  if (isActive) {
+    Uint8 const *state = SDL_GetKeyboardState(NULL);
+    if (state[SDL_SCANCODE_W])
+      *y -= 1;
+    if (state[SDL_SCANCODE_S])
+      *y += 1;
+    if (state[SDL_SCANCODE_A])
+      *x -= 1;
+    if (state[SDL_SCANCODE_D])
+      *x += 1;
+  }
+  for (Mino *m : minos) {
+    m->updateRect(*m->x + *x, *m->y + *y, *m->w, *m->h);
+  }
+  calculateRect();
+  Sprite::render(milli, targetTexture);
+  visualize(gRender, targetTexture);
 }

@@ -1,3 +1,4 @@
+#include "collision/CollisionManager.h"
 #include "color.h"
 #include "logging.h"
 #include "sprite/ImageSprite.h"
@@ -20,7 +21,7 @@ bool gameRunning = true;
 std::vector<Sprite *> sprites;
 Uint32 currentTime = 0;
 Uint32 lastTime = 0;
-
+CollisionManager cm = CollisionManager();
 
 int init();
 int graceful_exit();
@@ -32,15 +33,19 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::Z, 100, 100));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::I, 0, 200));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::T, 100, 200));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::O, 200, 200));
-
+  Tetromino *pieces[] = {
+      new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0),
+      new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0),
+      new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100),
+      new Tetromino(gRenderer, Tetromino::Shape::Z, 100, 100),
+      new Tetromino(gRenderer, Tetromino::Shape::I, 0, 200),
+      new Tetromino(gRenderer, Tetromino::Shape::T, 100, 200),
+      new Tetromino(gRenderer, Tetromino::Shape::O, 200, 200)};
+  pieces[0]->isActive = true;
+  for (Tetromino *piece : pieces) {
+    sprites.push_back(piece);
+    cm.addItem(piece);
+  }
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
     lastTime = currentTime;
@@ -92,10 +97,10 @@ void render() {
   SDL_SetRenderDrawColor(gRenderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
                          BACKGROUND.a);
   SDL_RenderClear(gRenderer);
+  cm.checkCollisions();
   for (Sprite *s : sprites) {
     // NULL targetTexture to target the screen
     s->render(currentTime - lastTime, NULL);
-
   }
   SDL_RenderPresent(gRenderer);
 }

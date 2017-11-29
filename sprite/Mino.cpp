@@ -1,7 +1,8 @@
 #include "Mino.h"
+#include "../collision/CollisionBase.h"
 #include <SDL2/SDL.h>
 Mino::Mino(SDL_Renderer *mRenderer, enum Color mColor)
-    : ImageSprite(mRenderer), gColor(mColor) {
+    : ImageSprite(mRenderer), CollisionBase(0, 0, 0, 0), gColor(mColor) {
   std::string file = "images/";
   switch (gColor) {
   case cyan:
@@ -34,5 +35,6 @@ Mino::Mino(SDL_Renderer *mRenderer, enum Color mColor)
   changeImage(file);
   *w = MINO_SIZE;
   *h = *w;
+  updateRect(*x, *y, *w, *h);
 }
 Mino::~Mino() {}
