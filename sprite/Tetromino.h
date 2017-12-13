@@ -8,7 +8,7 @@
 class Tetromino : public Sprite, public CollisionGroup {
 
 public:
-  enum Shape { O, I, T, L, J, S, Z };
+  enum Shape { O = 0, I, T, L, J, S, Z };
   Tetromino(SDL_Renderer *renderer, enum Shape type, int startX, int startY);
   virtual ~Tetromino();
   void createTexture();

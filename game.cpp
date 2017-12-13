@@ -64,6 +64,7 @@ int main(int argc, char const *argv[]) {
   return graceful_exit();
 }
 int init() {
+  srand(time(NULL));
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
     ERROR("SDL_Init failed");
     return -1;
@@ -105,7 +106,8 @@ void render() {
   SDL_RenderPresent(gRenderer);
 }
 void addTetromino() {
-  Tetromino *mTetro = new Tetromino(gRenderer, Tetromino::Shape::Z, 5, 5);
+  Tetromino::Shape shape = static_cast<Tetromino::Shape>(rand() % 7);
+  Tetromino *mTetro = new Tetromino(gRenderer, shape, 5, 5);
   if (activePiece != NULL)
     activePiece->isActive = false;
   mTetro->isActive = true;
