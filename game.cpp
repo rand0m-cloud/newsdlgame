@@ -1,6 +1,7 @@
 #include "collision/CollisionManager.h"
 #include "color.h"
 #include "logging.h"
+#include "matrix/Matrix.h"
 #include "sprite/ImageSprite.h"
 #include "sprite/Mino.h"
 #include "sprite/Sprite.h"
@@ -10,11 +11,12 @@
 #include <vector>
 
 #define TITLE "NewSDLGame"
-#define WIDTH 400
-#define HEIGHT 400
-#define FPS 60
-#define TPF (double)(1000 / FPS)
+#define WIDTH MATRIX_COLUMNS *MINO_SIZE
+#define HEIGHT MATRIX_ROWS *MINO_SIZE
+#define DEFAULT_FPS 60
+#define TPF(x) (double)(1000 / x)
 
+int fps = DEFAULT_FPS;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
@@ -33,14 +35,10 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  Tetromino *pieces[] = {
-      new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0),
-      new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0),
-      new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100),
-      new Tetromino(gRenderer, Tetromino::Shape::Z, 100, 100),
-      new Tetromino(gRenderer, Tetromino::Shape::I, 0, 200),
-      new Tetromino(gRenderer, Tetromino::Shape::T, 100, 200),
-      new Tetromino(gRenderer, Tetromino::Shape::O, 200, 200)};
+  std::array<Tetromino *, 3> pieces = {
+      {new Tetromino(gRenderer, Tetromino::Shape::S, 5, 5),
+       new Tetromino(gRenderer, Tetromino::Shape::J, 5, 15),
+       new Tetromino(gRenderer, Tetromino::Shape::L, 5, 10)}};
   pieces[0]->isActive = true;
   for (Tetromino *piece : pieces) {
     sprites.push_back(piece);
@@ -49,8 +47,8 @@ int main(int argc, char const *argv[]) {
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
     lastTime = currentTime;
-    if (SDL_GetTicks() - lastTime < TPF) {
-      SDL_Delay(TPF - (SDL_GetTicks() - lastTime));
+    if (SDL_GetTicks() - lastTime < TPF(fps)) {
+      SDL_Delay(TPF(fps) - (SDL_GetTicks() - lastTime));
     }
     currentTime = SDL_GetTicks();
     SDL_Event *evt = new SDL_Event;
@@ -84,7 +82,10 @@ int init() {
   if (gRenderer == NULL) {
     ERROR("gRenderer is null");
   }
-
+  char *fps_env = SDL_getenv("FPS");
+  if (fps_env) {
+    fps = atoi(fps_env);
+  }
   return 0;
 }
 int graceful_exit() {

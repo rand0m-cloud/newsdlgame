@@ -7,8 +7,9 @@ CollisionManager::CollisionManager() {}
 void CollisionManager::checkCollisions() {
 
   for (int i = 0; i < items.size(); i++) {
-    if (collidesWith(items[i]))
-      DEBUG("COLLIDE");
+    if (collidesWith(items[i])) {
+      // DEBUG("COLLIDE");
+    }
   }
 }
 void CollisionManager::addItem(CollisionGroup *item) {

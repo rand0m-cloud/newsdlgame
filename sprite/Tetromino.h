@@ -14,9 +14,9 @@ public:
   void createTexture();
   void render(int milli, SDL_Texture *targetTexture);
   bool isActive = false;
+  std::vector<Mino *> minos;
 
 private:
-  std::vector<Mino *> minos;
   TetrominoPattern const *gPattern;
   enum Tetromino::Shape gType;
 };
