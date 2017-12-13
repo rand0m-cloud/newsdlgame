@@ -12,6 +12,7 @@ public:
   Tetromino(SDL_Renderer *renderer, enum Shape type, int startX, int startY);
   virtual ~Tetromino();
   void createTexture();
+  bool moveDown();
   void render(int milli, SDL_Texture *targetTexture);
   bool isActive = false;
   std::vector<Mino *> minos;

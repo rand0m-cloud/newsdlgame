@@ -85,3 +85,10 @@ void Tetromino::render(int milli, SDL_Texture *targetTexture) {
 
   visualize(gRender, targetTexture);
 }
+bool Tetromino::moveDown() {
+  if (Matrix::getInstance()->tryMove(this, 0, 1) == false) {
+    return false;
+  }
+  Matrix::getInstance()->move(this, 0, 1);
+  return true;
+}

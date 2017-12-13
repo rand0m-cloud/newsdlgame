@@ -24,10 +24,13 @@ std::vector<Sprite *> sprites;
 Uint32 currentTime = 0;
 Uint32 lastTime = 0;
 CollisionManager cm = CollisionManager();
+Tetromino *activePiece = NULL;
+std::vector<Tetromino *> pieces;
 
 int init();
 int graceful_exit();
 void render();
+void addTetromino(Tetromino *);
 
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
@@ -35,15 +38,8 @@ int main(int argc, char const *argv[]) {
     return -1;
   }
   DEBUG("Init'd");
-  std::array<Tetromino *, 3> pieces = {
-      {new Tetromino(gRenderer, Tetromino::Shape::S, 5, 5),
-       new Tetromino(gRenderer, Tetromino::Shape::J, 5, 15),
-       new Tetromino(gRenderer, Tetromino::Shape::L, 5, 10)}};
-  pieces[0]->isActive = true;
-  for (Tetromino *piece : pieces) {
-    sprites.push_back(piece);
-    cm.addItem(piece);
-  }
+
+  addTetromino(new Tetromino(gRenderer, Tetromino::Shape::J, 5, 5));
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
     lastTime = currentTime;
@@ -58,6 +54,9 @@ int main(int argc, char const *argv[]) {
         gameRunning = false;
         break;
       }
+    }
+    if (activePiece->moveDown() == false) {
+      addTetromino(new Tetromino(gRenderer, Tetromino::Shape::Z, 5, 5));
     }
     render();
   }
@@ -104,4 +103,13 @@ void render() {
     s->render(currentTime - lastTime, NULL);
   }
   SDL_RenderPresent(gRenderer);
+}
+void addTetromino(Tetromino *mTetro) {
+  if (activePiece != NULL)
+    activePiece->isActive = false;
+  mTetro->isActive = true;
+  activePiece = mTetro;
+  pieces.push_back(mTetro);
+  sprites.push_back(mTetro);
+  cm.addItem(mTetro);
 }

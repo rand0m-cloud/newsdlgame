@@ -76,6 +76,21 @@ tryMoveResult *Matrix::tryMove(Mino *mMino, int x, int y) {
   return result;
 }
 void Matrix::move(Tetromino *mTetro, int x, int y) {
+#ifdef SHOW_MATRIX
+  for (int y = 0; y < MATRIX_ROWS; y++) {
+    std::cout << "[";
+    for (int x = 0; x < MATRIX_COLUMNS; x++) {
+      if (minos[y][x]) {
+        std::cout << minos[y][x] << ",";
+      } else {
+        std::cout << "0x000000,";
+      }
+    }
+    std::cout << "]" << std::endl;
+  }
+
+  std::cout << std::endl << std::endl << std::endl;
+#endif
   for (Mino *m : mTetro->minos) {
     move(m, x, y);
   }
@@ -93,10 +108,10 @@ void Matrix::move(Mino *mMino, int x, int y) {
     DEBUG("Y is invalid:" << y);
     return;
   }
-  minos[oldy][oldx] = NULL;
+  if (minos[oldy][oldx] == mMino) {
+    minos[oldy][oldx] = NULL;
+  }
   minos[newy][newx] = mMino;
   mMino->gLocation.x = newx;
   mMino->gLocation.y = newy;
-  DEBUG("Moved mino [" << oldy << "," << oldx << "] to [" << newy << "," << newx
-                       << "]");
 }
