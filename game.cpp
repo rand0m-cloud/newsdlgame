@@ -30,7 +30,7 @@ std::vector<Tetromino *> pieces;
 int init();
 int graceful_exit();
 void render();
-void addTetromino(Tetromino *);
+void addTetromino();
 
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
@@ -39,7 +39,7 @@ int main(int argc, char const *argv[]) {
   }
   DEBUG("Init'd");
 
-  addTetromino(new Tetromino(gRenderer, Tetromino::Shape::J, 5, 5));
+  addTetromino();
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
     lastTime = currentTime;
@@ -56,7 +56,7 @@ int main(int argc, char const *argv[]) {
       }
     }
     if (activePiece->moveDown() == false) {
-      addTetromino(new Tetromino(gRenderer, Tetromino::Shape::Z, 5, 5));
+      addTetromino();
     }
     render();
   }
@@ -104,7 +104,8 @@ void render() {
   }
   SDL_RenderPresent(gRenderer);
 }
-void addTetromino(Tetromino *mTetro) {
+void addTetromino() {
+  Tetromino *mTetro = new Tetromino(gRenderer, Tetromino::Shape::Z, 5, 5);
   if (activePiece != NULL)
     activePiece->isActive = false;
   mTetro->isActive = true;
