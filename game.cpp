@@ -1,4 +1,3 @@
-#include "collision/CollisionManager.h"
 #include "color.h"
 #include "logging.h"
 #include "matrix/Matrix.h"
@@ -23,7 +22,6 @@ bool gameRunning = true;
 std::vector<Sprite *> sprites;
 Uint32 currentTime = 0;
 Uint32 lastTime = 0;
-CollisionManager cm = CollisionManager();
 Tetromino *activePiece = NULL;
 std::vector<Tetromino *> pieces;
 
@@ -98,7 +96,6 @@ void render() {
   SDL_SetRenderDrawColor(gRenderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
                          BACKGROUND.a);
   SDL_RenderClear(gRenderer);
-  cm.checkCollisions();
   for (Sprite *s : sprites) {
     // NULL targetTexture to target the screen
     s->render(currentTime - lastTime, NULL);
@@ -114,5 +111,4 @@ void addTetromino() {
   activePiece = mTetro;
   pieces.push_back(mTetro);
   sprites.push_back(mTetro);
-  cm.addItem(mTetro);
 }

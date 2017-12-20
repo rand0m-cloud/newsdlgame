@@ -6,7 +6,7 @@
 
 Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
                      int startX, int startY)
-    : Sprite(mRenderer), CollisionGroup(), gType(type) {
+    : Sprite(mRenderer), gType(type) {
   Mino::Color color;
   switch (gType) {
   case O:
@@ -48,13 +48,11 @@ Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
     SDL_Point const *shape = &(*gPattern)[i];
 
     minos.push_back(m);
-    addItem(m);
     m->gLocation = {startX + shape->x, startY + shape->y};
     if (Matrix::getInstance()->insertMino(m) == false) {
       DEBUG("Can not insert Mino");
     }
   }
-  calculateRect();
 }
 Tetromino::~Tetromino() {}
 void Tetromino::createTexture() { Sprite::createTexture(); }
@@ -81,9 +79,6 @@ void Tetromino::render(int milli, SDL_Texture *targetTexture) {
   for (Mino *m : minos) {
     m->render(milli, targetTexture);
   }
-  calculateRect();
-
-  visualize(gRender, targetTexture);
 }
 bool Tetromino::moveDown() {
   if (Matrix::getInstance()->tryMove(this, 0, 1) == false) {

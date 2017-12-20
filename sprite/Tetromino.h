@@ -1,11 +1,10 @@
 #pragma once
-#include "../collision/CollisionGroup.h"
 #include "Mino.h"
 #include "Shapes.h"
 #include "Sprite.h"
 #include <SDL2/SDL.h>
 #include <vector>
-class Tetromino : public Sprite, public CollisionGroup {
+class Tetromino : public Sprite {
 
 public:
   enum Shape { O = 0, I, T, L, J, S, Z };
