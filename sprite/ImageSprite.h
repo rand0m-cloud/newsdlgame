@@ -13,4 +13,3 @@ public:
   void changeImage(std::string file);
   ~ImageSprite();
 };
-

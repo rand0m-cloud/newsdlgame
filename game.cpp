@@ -1,5 +1,6 @@
 #include "color.h"
 #include "logging.h"
+#include "matrix/Matrix.h"
 #include "sprite/ImageSprite.h"
 #include "sprite/Mino.h"
 #include "sprite/Sprite.h"
@@ -9,22 +10,25 @@
 #include <vector>
 
 #define TITLE "NewSDLGame"
-#define WIDTH 400
-#define HEIGHT 400
-#define FPS 60
-#define TPF (double)(1000 / FPS)
+#define WIDTH MATRIX_COLUMNS *MINO_SIZE
+#define HEIGHT MATRIX_ROWS *MINO_SIZE
+#define DEFAULT_FPS 60
+#define TPF(x) (double)(1000 / x)
 
+int fps = DEFAULT_FPS;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
 std::vector<Sprite *> sprites;
 Uint32 currentTime = 0;
 Uint32 lastTime = 0;
-
+Tetromino *activePiece = NULL;
+std::vector<Tetromino *> pieces;
 
 int init();
 int graceful_exit();
 void render();
+void addTetromino();
 
 int main(int argc, char const *argv[]) {
   if (init() != 0) {
@@ -33,19 +37,12 @@ int main(int argc, char const *argv[]) {
   }
   DEBUG("Init'd");
 
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::S, 0, 0));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::J, 100, 0));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::L, 0, 100));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::Z, 100, 100));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::I, 0, 200));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::T, 100, 200));
-  sprites.push_back(new Tetromino(gRenderer, Tetromino::Shape::O, 200, 200));
-
+  addTetromino();
   currentTime = lastTime = SDL_GetTicks();
   while (gameRunning) {
     lastTime = currentTime;
-    if (SDL_GetTicks() - lastTime < TPF) {
-      SDL_Delay(TPF - (SDL_GetTicks() - lastTime));
+    if (SDL_GetTicks() - lastTime < TPF(fps)) {
+      SDL_Delay(TPF(fps) - (SDL_GetTicks() - lastTime));
     }
     currentTime = SDL_GetTicks();
     SDL_Event *evt = new SDL_Event;
@@ -56,12 +53,16 @@ int main(int argc, char const *argv[]) {
         break;
       }
     }
+    if (activePiece->moveDown() == false) {
+      addTetromino();
+    }
     render();
   }
 
   return graceful_exit();
 }
 int init() {
+  srand(time(NULL));
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
     ERROR("SDL_Init failed");
     return -1;
@@ -79,7 +80,10 @@ int init() {
   if (gRenderer == NULL) {
     ERROR("gRenderer is null");
   }
-
+  char *fps_env = SDL_getenv("FPS");
+  if (fps_env) {
+    fps = atoi(fps_env);
+  }
   return 0;
 }
 int graceful_exit() {
@@ -95,7 +99,16 @@ void render() {
   for (Sprite *s : sprites) {
     // NULL targetTexture to target the screen
     s->render(currentTime - lastTime, NULL);
-
   }
   SDL_RenderPresent(gRenderer);
+}
+void addTetromino() {
+  Tetromino::Shape shape = static_cast<Tetromino::Shape>(rand() % 7);
+  Tetromino *mTetro = new Tetromino(gRenderer, shape, 5, 5);
+  if (activePiece != NULL)
+    activePiece->isActive = false;
+  mTetro->isActive = true;
+  activePiece = mTetro;
+  pieces.push_back(mTetro);
+  sprites.push_back(mTetro);
 }
