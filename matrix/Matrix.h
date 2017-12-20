@@ -1,5 +1,6 @@
 #pragma once
 #include "../sprite/Mino.h"
+#include "../sprite/Sprite.h"
 #include "../sprite/Tetromino.h"
 #include <array>
 
@@ -11,19 +12,21 @@ struct tryMoveResult {
   Mino *blockingMino;
 };
 typedef std::array<Mino *, MATRIX_COLUMNS> MatrixRow;
-class Matrix {
+class Matrix : public Sprite {
 private:
   std::array<MatrixRow, MATRIX_ROWS> minos;
   Matrix();
   ~Matrix();
   static Matrix *gInstance;
+  static Sprite *spriteInstance;
 
 public:
   static Matrix *getInstance();
+
   MatrixRow getRow(int row);
   bool insertMino(Mino *);
-  bool tryMove(Tetromino *, int x, int y);
   tryMoveResult *tryMove(Mino *, int x, int y);
-  void move(Tetromino *, int x, int y);
   void move(Mino *, int x, int y);
+  void createTexture();
+  void setRenderer(SDL_Renderer *);
 };

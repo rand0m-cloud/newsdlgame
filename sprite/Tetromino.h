@@ -3,17 +3,19 @@
 #include "Shapes.h"
 #include <SDL2/SDL.h>
 #include <vector>
-class Tetromino : public Sprite {
+class Tetromino {
 
 public:
   enum Shape { O = 0, I, T, L, J, S, Z };
   enum Rotation { CW = 0, CCW };
   Tetromino(SDL_Renderer *renderer, enum Shape type, int startX, int startY);
   virtual ~Tetromino();
-  void createTexture();
+
   bool moveDown();
+  bool tryMove(int dx, int dy);
+  void move(int dx, int dy);
   bool rotate(enum Rotation);
-  void render(int milli, SDL_Texture *targetTexture);
+  void frame();
   bool isActive = false;
   std::vector<Mino *> minos;
 

@@ -1,10 +1,8 @@
 #include "Matrix.h"
-#include "../sprite/Mino.h"
-#include "../sprite/Tetromino.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
 Matrix *Matrix::gInstance = NULL;
-Matrix::Matrix() {
+Matrix::Matrix() : Sprite(NULL) {
   for (int y = 0; y < MATRIX_ROWS; y++) {
     for (int x = 0; x < MATRIX_COLUMNS; x++) {
       minos[y][x] = NULL;
@@ -36,23 +34,6 @@ bool Matrix::insertMino(Mino *m) {
   }
   return false;
 }
-bool Matrix::tryMove(Tetromino *mTetro, int x, int y) {
-  bool canMove = true;
-  for (Mino *m : mTetro->minos) {
-    tryMoveResult *result = tryMove(m, x, y);
-    if (result->canMove) {
-      continue;
-    } else if (result->isBlocked) {
-      bool inTetro = std::find(mTetro->minos.begin(), mTetro->minos.end(),
-                               result->blockingMino) != mTetro->minos.end();
-      if (inTetro) {
-        continue;
-      }
-    }
-    canMove = false;
-  }
-  return canMove;
-}
 tryMoveResult *Matrix::tryMove(Mino *mMino, int x, int y) {
   tryMoveResult *result = new tryMoveResult;
   result->blockingMino = NULL;
@@ -75,26 +56,6 @@ tryMoveResult *Matrix::tryMove(Mino *mMino, int x, int y) {
   }
   return result;
 }
-void Matrix::move(Tetromino *mTetro, int x, int y) {
-#ifdef SHOW_MATRIX
-  for (int y = 0; y < MATRIX_ROWS; y++) {
-    std::cout << "[";
-    for (int x = 0; x < MATRIX_COLUMNS; x++) {
-      if (minos[y][x]) {
-        std::cout << minos[y][x] << ",";
-      } else {
-        std::cout << "0x000000,";
-      }
-    }
-    std::cout << "]" << std::endl;
-  }
-
-  std::cout << std::endl << std::endl << std::endl;
-#endif
-  for (Mino *m : mTetro->minos) {
-    move(m, x, y);
-  }
-}
 void Matrix::move(Mino *mMino, int x, int y) {
   int oldx = mMino->gLocation.x;
   int oldy = mMino->gLocation.y;
@@ -115,3 +76,12 @@ void Matrix::move(Mino *mMino, int x, int y) {
   mMino->gLocation.x = newx;
   mMino->gLocation.y = newy;
 }
+void Matrix::createTexture() {
+  for (MatrixRow row : minos) {
+    for (Mino *m : row) {
+      if (m)
+        m->render(0, gTexture);
+    }
+  }
+}
+void Matrix::setRenderer(SDL_Renderer *mRenderer) { gRender = mRenderer; }

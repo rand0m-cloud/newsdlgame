@@ -3,7 +3,7 @@
 #include <algorithm>
 Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
                      int startX, int startY)
-    : Sprite(mRenderer), gType(type) {
+    : gType(type) {
   Mino::Color color;
   switch (gType) {
   case O:
@@ -38,8 +38,6 @@ Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
     ERROR("Switch defaulted");
     break;
   }
-  sourceRect = dstRect;
-
   for (int i = 0; i < 4; i++) {
     Mino *m = new Mino(mRenderer, color);
     SDL_Point const *shape = &(*gPattern)[i];
@@ -51,10 +49,9 @@ Tetromino::Tetromino(SDL_Renderer *mRenderer, enum Tetromino::Shape type,
     }
   }
 }
-Tetromino::~Tetromino() {}
-void Tetromino::createTexture() { Sprite::createTexture(); }
-void Tetromino::render(int milli, SDL_Texture *targetTexture) {
+Tetromino::~Tetromino() { DEBUG("Tetromino Deleted"); }
 
+void Tetromino::frame() {
   if (isActive) {
     int dx = 0;
     int dy = 0;
@@ -72,20 +69,16 @@ void Tetromino::render(int milli, SDL_Texture *targetTexture) {
     if (state[SDL_SCANCODE_E])
       rotate(Tetromino::Rotation::CW);
     if (dx != 0 || dy != 0) {
-      if (Matrix::getInstance()->tryMove(this, dx, dy))
-        Matrix::getInstance()->move(this, dx, dy);
+      if (tryMove(dx, dy))
+        move(dx, dy);
     }
-  }
-
-  for (Mino *m : minos) {
-    m->render(milli, targetTexture);
   }
 }
 bool Tetromino::moveDown() {
-  if (Matrix::getInstance()->tryMove(this, 0, 1) == false) {
+  if (tryMove(0, 1) == false) {
     return false;
   }
-  Matrix::getInstance()->move(this, 0, 1);
+  move(0, 1);
   return true;
 }
 void printVector(std::vector<std::vector<Mino *>> v) {
@@ -98,25 +91,25 @@ void printVector(std::vector<std::vector<Mino *>> v) {
 }
 bool Tetromino::rotate(enum Tetromino::Rotation direction) {
   struct boundingBox {
-    int left = 0;
-    int right = 0;
-    int top = 0;
-    int bottom = 0;
-    int width = 0;
-    int height = 0;
+    int left = -1;
+    int right = -1;
+    int top = -1;
+    int bottom = -1;
+    int width = -1;
+    int height = -1;
   } box;
   for (Mino *m : minos) {
     SDL_Point mLocation = m->gLocation;
-    if (box.left == 0 || mLocation.x < box.left) {
+    if (box.left == -1 || mLocation.x < box.left) {
       box.left = mLocation.x;
     }
-    if (box.right == 0 || mLocation.x > box.right) {
+    if (box.right == -1 || mLocation.x > box.right) {
       box.right = mLocation.x;
     }
-    if (box.top == 0 || mLocation.y < box.top) {
+    if (box.top == -1 || mLocation.y < box.top) {
       box.top = mLocation.y;
     }
-    if (box.bottom == 0 || mLocation.y > box.bottom) {
+    if (box.bottom == -1 || mLocation.y > box.bottom) {
       box.bottom = mLocation.y;
     }
   }
@@ -149,7 +142,7 @@ bool Tetromino::rotate(enum Tetromino::Rotation direction) {
       transposedBox[y][x] = boxToRotate[x][y];
     }
   }
-  printVector(transposedBox);
+  // printVector(transposedBox);
   std::vector<std::vector<Mino *>> finalBox(
       box.height, std::vector<Mino *>(box.width, NULL));
   if (direction == Tetromino::Rotation::CW) {
@@ -167,5 +160,40 @@ bool Tetromino::rotate(enum Tetromino::Rotation direction) {
     DEBUG("CCW");
   }
   printVector(finalBox);
+  for (unsigned int y = 0; y < finalBox.size(); y++) {
+    for (unsigned int x = 0; x < finalBox[y].size(); x++) {
+      if (finalBox[y][x] != NULL) {
+        // Matrix::getInstance()->tryMove(Mino *, int x, int y)
+      }
+    }
+  }
   return true;
+}
+bool interpretResult(tryMoveResult *result, std::vector<Mino *> minos) {
+  if (result->canMove) {
+    return true;
+  } else if (result->isBlocked) {
+    bool inTetro = std::find(minos.begin(), minos.end(),
+                             result->blockingMino) != minos.end();
+    if (inTetro) {
+      return true;
+    }
+  }
+  return false;
+}
+bool Tetromino::tryMove(int x, int y) {
+  bool canMove = true;
+  for (Mino *m : minos) {
+    tryMoveResult *result = Matrix::getInstance()->tryMove(m, x, y);
+    if (!interpretResult(result, minos))
+      canMove = false;
+  }
+  return canMove;
+}
+
+void Tetromino::move(int x, int y) {
+
+  for (Mino *m : minos) {
+    Matrix::getInstance()->move(m, x, y);
+  }
 }

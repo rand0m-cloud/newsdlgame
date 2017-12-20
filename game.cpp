@@ -6,6 +6,7 @@
 #include "sprite/Sprite.h"
 #include "sprite/Tetromino.h"
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -19,11 +20,9 @@ int fps = DEFAULT_FPS;
 SDL_Window *gWindow = NULL;
 SDL_Renderer *gRenderer = NULL;
 bool gameRunning = true;
-std::vector<Sprite *> sprites;
 Uint32 currentTime = 0;
 Uint32 lastTime = 0;
 Tetromino *activePiece = NULL;
-std::vector<Tetromino *> pieces;
 
 int init();
 int graceful_exit();
@@ -84,6 +83,7 @@ int init() {
   if (fps_env) {
     fps = atoi(fps_env);
   }
+  Matrix::getInstance()->setRenderer(gRenderer);
   return 0;
 }
 int graceful_exit() {
@@ -96,19 +96,18 @@ void render() {
   SDL_SetRenderDrawColor(gRenderer, BACKGROUND.r, BACKGROUND.g, BACKGROUND.b,
                          BACKGROUND.a);
   SDL_RenderClear(gRenderer);
-  for (Sprite *s : sprites) {
-    // NULL targetTexture to target the screen
-    s->render(currentTime - lastTime, NULL);
-  }
+  // NULL targetTexture to target the screen
+  if (activePiece)
+    activePiece->frame();
+  Matrix::getInstance()->render(currentTime - lastTime, NULL);
   SDL_RenderPresent(gRenderer);
 }
 void addTetromino() {
   Tetromino::Shape shape = static_cast<Tetromino::Shape>(rand() % 7);
   Tetromino *mTetro = new Tetromino(gRenderer, shape, 5, 5);
-  if (activePiece != NULL)
-    activePiece->isActive = false;
   mTetro->isActive = true;
+  if (activePiece != NULL) {
+    delete activePiece;
+  }
   activePiece = mTetro;
-  pieces.push_back(mTetro);
-  sprites.push_back(mTetro);
 }

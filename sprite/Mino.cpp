@@ -40,4 +40,4 @@ void Mino::render(int milli, SDL_Texture *texture) {
   *y = gLocation.y * MINO_SIZE;
   Sprite::render(milli, texture);
 }
-Mino::~Mino() {}
+Mino::~Mino() { DEBUG("Mino Deleted"); }
