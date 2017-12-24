@@ -14,19 +14,20 @@ struct tryMoveResult {
 typedef std::array<Mino *, MATRIX_COLUMNS> MatrixRow;
 class Matrix : public Sprite {
 private:
-  std::array<MatrixRow, MATRIX_ROWS> minos;
   Matrix();
   ~Matrix();
   static Matrix *gInstance;
   static Sprite *spriteInstance;
 
 public:
+  std::array<MatrixRow, MATRIX_ROWS> minos;
   static Matrix *getInstance();
-
+  void deleteMino(int x, int y);
   MatrixRow getRow(int row);
   bool insertMino(Mino *);
   tryMoveResult *tryMove(Mino *, int x, int y);
   void move(Mino *, int x, int y);
   void createTexture();
+  void printMatrix();
   void setRenderer(SDL_Renderer *);
 };

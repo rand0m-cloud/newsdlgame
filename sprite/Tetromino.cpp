@@ -64,10 +64,11 @@ void Tetromino::frame() {
       dx = -1;
     if (state[SDL_SCANCODE_D])
       dx = 1;
-    if (state[SDL_SCANCODE_Q])
+    if (state[SDL_SCANCODE_Q]) {
       rotate(Tetromino::Rotation::CCW);
-    if (state[SDL_SCANCODE_E])
+    } else if (state[SDL_SCANCODE_E]) {
       rotate(Tetromino::Rotation::CW);
+    }
     if (dx != 0 || dy != 0) {
       if (tryMove(dx, dy))
         move(dx, dy);
@@ -88,6 +89,18 @@ void printVector(std::vector<std::vector<Mino *>> v) {
     }
     std::cout << std::endl;
   }
+}
+bool interpretResult(tryMoveResult *result, std::vector<Mino *> minos) {
+  if (result->canMove) {
+    return true;
+  } else if (result->isBlocked) {
+    bool inTetro = std::find(minos.begin(), minos.end(),
+                             result->blockingMino) != minos.end();
+    if (inTetro) {
+      return true;
+    }
+  }
+  return false;
 }
 bool Tetromino::rotate(enum Tetromino::Rotation direction) {
   struct boundingBox {
@@ -160,26 +173,53 @@ bool Tetromino::rotate(enum Tetromino::Rotation direction) {
     DEBUG("CCW");
   }
   printVector(finalBox);
+  bool canMove = true;
   for (unsigned int y = 0; y < finalBox.size(); y++) {
     for (unsigned int x = 0; x < finalBox[y].size(); x++) {
       if (finalBox[y][x] != NULL) {
-        // Matrix::getInstance()->tryMove(Mino *, int x, int y)
+        Mino *m = finalBox[y][x];
+        int newX = x + box.left;
+        int newY = y + box.top;
+        DEBUG("old:[" << m->gLocation.x << "," << m->gLocation.y << "]");
+        DEBUG("new:[" << newX << "," << newY << "]");
+        tryMoveResult *result = Matrix::getInstance()->tryMove(
+            m, newX - m->gLocation.x, newY - m->gLocation.y);
+        if (interpretResult(result, minos) == false)
+          canMove = false;
       }
     }
   }
-  return true;
-}
-bool interpretResult(tryMoveResult *result, std::vector<Mino *> minos) {
-  if (result->canMove) {
-    return true;
-  } else if (result->isBlocked) {
-    bool inTetro = std::find(minos.begin(), minos.end(),
-                             result->blockingMino) != minos.end();
-    if (inTetro) {
-      return true;
+  if (canMove) {
+    DEBUG("canMove");
+    for (unsigned int y = 0; y < finalBox.size(); y++) {
+      for (unsigned int x = 0; x < finalBox[y].size(); x++) {
+        if (finalBox[y][x] != NULL) {
+          Mino *m = finalBox[y][x];
+          Matrix::getInstance()->deleteMino(m->gLocation.x, m->gLocation.y);
+        }
+      }
+    }
+    for (unsigned int y = 0; y < finalBox.size(); y++) {
+      for (unsigned int x = 0; x < finalBox[y].size(); x++) {
+        if (finalBox[y][x] != NULL) {
+          Mino *m = finalBox[y][x];
+          int newX = x + box.left;
+          int newY = y + box.top;
+          DEBUG("old:[" << m->gLocation.x << "," << m->gLocation.y << "]");
+          DEBUG("new:[" << newX << "," << newY << "]");
+          // Matrix::getInstance()->printMatrix();
+          // Matrix::getInstance()->printMatrix();
+          m->gLocation.x = newX;
+          m->gLocation.y = newY;
+          //  Matrix::getInstance()->printMatrix();
+          // Matrix::getInstance()->deleteMino(m->gLocation.x, m->gLocation.y);
+          Matrix::getInstance()->insertMino(m);
+          //  Matrix::getInstance()->printMatrix();
+        }
+      }
     }
   }
-  return false;
+  return canMove;
 }
 bool Tetromino::tryMove(int x, int y) {
   bool canMove = true;

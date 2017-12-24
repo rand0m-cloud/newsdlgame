@@ -16,10 +16,14 @@ Matrix *Matrix::getInstance() {
   return gInstance;
 }
 bool Matrix::insertMino(Mino *m) {
+  if (m == NULL) {
+    DEBUG("Mino is null");
+    return false;
+  }
   int x = m->gLocation.x;
   int y = m->gLocation.y;
-  if (m == NULL)
-    DEBUG("Mino is null");
+  DEBUG("INSERT:[" << x << "," << y << "]");
+
   if (x < 0 || x > MATRIX_COLUMNS - 1) {
     DEBUG("X is invalid" << x);
     return false;
@@ -28,11 +32,13 @@ bool Matrix::insertMino(Mino *m) {
     DEBUG("Y is invalid" << y);
     return false;
   }
-  if (minos[y][x] == NULL) {
-    minos[y][x] = m;
-    return true;
+  bool result = true;
+  if (minos[y][x] != NULL) {
+    DEBUG("New mino spot is not null");
+    result = false;
   }
-  return false;
+  minos[y][x] = m;
+  return result;
 }
 tryMoveResult *Matrix::tryMove(Mino *mMino, int x, int y) {
   tryMoveResult *result = new tryMoveResult;
@@ -85,3 +91,21 @@ void Matrix::createTexture() {
   }
 }
 void Matrix::setRenderer(SDL_Renderer *mRenderer) { gRender = mRenderer; }
+void Matrix::deleteMino(int x, int y) {
+  DEBUG("DELETE:[" << x << "," << y << "]");
+  minos[y][x] = NULL;
+}
+void Matrix::printMatrix() {
+  DEBUG("MATRIX:");
+  for (int y = 0; y < MATRIX_ROWS; y++) {
+    for (int x = 0; x < MATRIX_COLUMNS; x++) {
+      if (minos[y][x] == NULL) {
+        std::cout << "0x0000000";
+      } else {
+        std::cout << minos[y][x];
+      }
+      std::cout << ",";
+    }
+    std::cout << std::endl;
+  }
+}
